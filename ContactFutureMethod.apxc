@@ -1,0 +1,30 @@
+public class ContactFutureMethod{
+    
+    
+    @future(Callout=true)
+     
+    public static void updateCountOfContacts(List<Id> AccountId){
+        
+        System.debug(AccountId);
+        if(AccountId.size()>0){
+            //System.debug('2');
+            List<AggregateResult> agResult=[Select Count(Id) noOfContacts,AccountId 
+                                            from Contact 
+                                            where AccountId in:AccountId 
+                                            Group by AccountId];
+            //System.debug(agResult);
+            List<Account> accountList=new List<Account>();
+            for(AggregateResult ar:agResult){
+                Account accountRecord=new Account();
+                accountRecord.Id=(Id)ar.get('AccountId');
+                accountRecord.Total_Contacts__c=(Decimal)ar.get('noOfContacts');
+                accountList.add(accountRecord);
+            }
+            //System.debug(accountList);
+            if(!accountList.isEmpty()){
+                //System.debug('3');
+                update accountList;
+            }
+        } 
+    }
+}
