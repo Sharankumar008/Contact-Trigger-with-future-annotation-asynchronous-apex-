@@ -1,0 +1,32 @@
+trigger ContactFutureTrigger on Contact(After Insert,After update,After Delete,After Undelete){
+    
+    Set<Id> accountIds = new Set<Id>();
+    Switch on Trigger.operationType{
+        when BEFORE_INSERT{
+            
+        }
+        when BEFORE_UPDATE{
+            
+        }
+        when AFTER_INSERT,AFTER_UPDATE,AFTER_UNDELETE{
+            for (Contact contact : Trigger.new) {
+                accountIds.add(contact.AccountId);
+            }
+            
+        }
+        
+        when BEFORE_DELETE{
+            
+        }
+        when AFTER_DELETE{
+            for (Contact contact : Trigger.old) {
+                accountIds.add(contact.AccountId);
+            }
+        }
+        
+    }
+    if (!accountIds.isEmpty()) {
+        ContactFutureMethod.updateCountOfContacts(new List<Id>(accountIds));
+    }
+    
+}
